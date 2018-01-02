@@ -3,7 +3,7 @@ const path = require('path');
 // const favicon = require('serve-favicon');
 const logger = require('morgan');
 const session = require('express-session');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const httpErrorHandler = require('./middlewares/http_error_handler');
 const errLogger = require('./utils/loggers/logger');
@@ -24,10 +24,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
+  name: 'web-portal',
   secret: 'asdasdwdasd',
-  resave: true,
+  resave: false,
   saveUninitialized: true,
-  cookie: { secure: true },
+  cookie: {
+    secure: true,
+    maxAge: 10000,
+  },
 }))
 
 app.use('/api', apiIndex);

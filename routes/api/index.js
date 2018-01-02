@@ -13,22 +13,22 @@ const crypto = require('crypto');
 // 把经典的callback类型写成Promise
 const pbkdf2Async = require('bluebird').promisify(crypto.pbkdf2);
 
-router.post('/login', (req, res, next) => {
-  (async () => {
-    const { username, password } = req.body;
-    // 加密方法
-    const cipher = await pbkdf2Async(password, 'asdasdasd', 10000, 512, 'sha2656')
-    const created = await User.insert({
-      username,
-      password: cipher,
-    });
-    return created;
-  })()
-    .then((r) => {
-    })
-    .catch((e) => {
-    });
-})
+// router.post('/login', (req, res, next) => {
+//   (async () => {
+//     const { username, password } = req.body;
+//     // 加密方法
+//     const cipher = await pbkdf2Async(password, 'asdasdasd', 10000, 512, 'sha2656')
+//     const created = await User.insert({
+//       username,
+//       password: cipher,
+//     });
+//     return created;
+//   })()
+//     .then((r) => {
+//     })
+//     .catch((e) => {
+//     });
+// })
 
 // router.get('/login', (req, res, next) => {
 //   const { username } = req.query;
@@ -36,16 +36,25 @@ router.post('/login', (req, res, next) => {
 //   const token = JWT.sign(user, 'asdwdqda');
 //   res.send(token);
 // });
+//
+// router.get('/hello', (req, res, next) => {
+//   const auth = req.get('Authorization');
+//   if (!auth) return res.send('no auth');
+//   if (!auth.indexOf('Bearer ') === -1) res.send('no auth');
+//   const token = auth.split('Bearer ')[1];
+//   const user = JWT.verify(token, 'asdwdqda');
+//   res.send(user);
+// })
 
-router.get('/hello', (req, res, next) => {
-  const auth = req.get('Authorization');
-  if (!auth) return res.send('no auth');
-  if (!auth.indexOf('Bearer ') === -1) res.send('no auth');
-  const token = auth.split('Bearer ')[1];
-  const user = JWT.verify(token, 'asdwdqda');
-  res.send(user);
+router.get('/login', (req,res, next) => {
+  req.session.user = { username: req.query.username};
+  req.session.save();
+  res.send(req.session);
 })
 
+router.get('/hello', (req, res, next) => {
+  res.send(`hello, ${req.session.user.username}`);
+})
 
 router.use('/user', userRouter);
 
