@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 // const favicon = require('serve-favicon');
 const logger = require('morgan');
-//const session = require('express-session');
+const session = require('cookie-session');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const httpErrorHandler = require('./middlewares/http_error_handler');
@@ -23,12 +23,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(session({
-//   secret: 'asdasdwdasd',
-//   resave: true,
-//   saveUninitialized: true,
-//   cookie: { secure: true },
-// }))
+app.use(session({
+  secret: 'asdasdwdasd',
+  resave: true,
+  saveUninitialized: true,
+  cookie: { secure: true },
+}))
 
 app.use('/api', apiIndex);
 
