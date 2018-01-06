@@ -1,9 +1,10 @@
 const express = require('express');
 
 const router = express.Router();
-const UserService = require('../../services/user_service')
-const apiRes = require('../../utils/api_response')
-/* GET users listing. */
+const UserService = require('../../services/user_service');
+const apiRes = require('../../utils/api_response');
+const auth = require('../../middlewares/auth');
+
 router.get('/', (req, res, next) => {
   (async () => {
     const users = await UserService.getAllUsers();
@@ -19,15 +20,28 @@ router.get('/', (req, res, next) => {
       next(e);
     });
 });
-
-router.post('/', (req, res) => {
-  const u = UserService.addNewUser(req.body);
-  res.json(u);
+router.post('/', (req, res, next) => {
+  (async () => {
+    const { username, password, name } = req.body;
+    const result = await UserService.addNewUser({
+      username,
+      password,
+      name,
+    });
+    return result;
+  })()
+    .then((r) => {
+      res.data = r;
+      apiRes(req, res);
+    })
+    .catch((e) => {
+      next(e);
+    });
 });
 // `:字符串`会被作为参数处理
 router.get('/:userId', (req, res, next) => {
   (async () => {
-    const { userId } = req.params;
+    const {userId} = req.params;
     const user = await UserService.getUserById(userId);
     return {
       user,
@@ -42,10 +56,10 @@ router.get('/:userId', (req, res, next) => {
     });
 });
 
-router.post('/:userId/subscription', (req, res, next) => {
+router.post('/:userId/subscription', auth(), (req, res, next) => {
   (async () => {
     const { userId } = req.params;
-    const sub = UserService.createSubscription(
+    const sub = await UserService.createSubscription(
       userId,
       req.body.url,
     );

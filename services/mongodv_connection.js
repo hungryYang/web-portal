@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = Promise;
 
 const uri = 'mongodb://localhost:27017/web-portal';
-const connection = mongoose.connect(uri , { useMongoClient: true });
+const connection = mongoose.connect(uri, { useMongoClient: true });
 const db = mongoose.connection;
 
 

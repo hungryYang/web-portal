@@ -1,8 +1,8 @@
 const winston = require('winston');
 
-const {Logger, transports} = winston;
+const { Logger, transports } = winston;
 require('winston-daily-rotate-file');
-const {Console, DailyRotateFile} = transports;
+const { Console, DailyRotateFile } = transports;
 
 const logger = new Logger({
   transports: [
@@ -23,3 +23,5 @@ const logger = new Logger({
     }),
   ],
 });
+
+module.exports = logger;
